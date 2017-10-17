@@ -1,0 +1,14 @@
+{
+  "name": "trev",
+  "version": "1.0.0",
+  "description": "trev is node.js module to create HTTP load generator using hey which is a ApacheBench replacement",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
