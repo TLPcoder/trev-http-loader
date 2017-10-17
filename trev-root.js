@@ -125,7 +125,7 @@ class trev{
         }
         return headers.trim();
     }
-    createCommandString() {
+    createCommand() {
         var command = 'hey'
         for(let key in this){
             if(this[key] !== null && key !== 'url' && key !== 'H'){
@@ -135,10 +135,13 @@ class trev{
             }
         }
         console.log('command', (command + this.url).trim());
-        exec(command + this.url).trim();
+        return (command + this.url).trim();
+        
+       
     }
     run () {
-        this.createCommandString();
+        const command = this.createCommand();
+        exec(command);
     }
 }
 
