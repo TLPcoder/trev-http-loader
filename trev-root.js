@@ -1,8 +1,10 @@
 'use strict';
-const exec = require('child_process').execSync;
+const { exec } = require('child_process');
+const { writeFileSync , unlinkSync} = require('fs')
 
-class trev{
-    constructor(){
+class trev {
+    constructor(title) {
+        this.title = title || '';
         this.n = null;
         this.c = null;
         this.q = null;
@@ -15,11 +17,11 @@ class trev{
         this.T = null;
         this.a = null;
         this.x = null;
-        this.url =  null;
+        this.url = null;
     }
     request(n) {
         // -n
-        if (typeof n !== 'number') {
+        if (typeof Number(n) !== 'number') {
             throw new TypeError('request is not of type number');
         } else {
             this.n = ` -n ${n} `;
@@ -28,7 +30,7 @@ class trev{
     }
     concurrency(rate) {
         // -c
-        if (typeof rate !== 'number') {
+        if (typeof Number(rate) !== 'number') {
             throw new TypeError('concurrency is not of type number');
         } else {
             this.c = ` -c ${rate} `;
@@ -37,7 +39,7 @@ class trev{
     }
     rateLimit(limit) {
         // -q
-        if (typeof limit !== 'number') {
+        if (typeof Number(limit) !== 'number') {
             throw new TypeError('limit is not of type number');
         } else {
             this.q = ` -q ${limit} `;
@@ -53,9 +55,9 @@ class trev{
         //GET, POST, PUT, DELETE, HEAD, OPTIONS.
         if (typeof verb !== 'string') {
             throw new TypeError('Method is not type string');
-        if (verb !== 'PUT' || verb !== 'GET' || verb !== 'POST' || verb !== 'DELETE' || verb !== 'HEAD' || verb !== 'OPTIONS'){
-            throw new RangeError('Method stated is not supported. Please use one of the following GET, POST, PUT, DELETE, HEAD, or OPTIONS.');
-        }
+            if (verb !== 'PUT' || verb !== 'GET' || verb !== 'POST' || verb !== 'DELETE' || verb !== 'HEAD' || verb !== 'OPTIONS') {
+                throw new RangeError('Method not supported. Please use one of the following GET, POST, PUT, DELETE, HEAD, or OPTIONS.');
+            }
         } else {
             this.m = ` -m ${verb} `;
             return this;
@@ -63,47 +65,64 @@ class trev{
     }
     headers(h) {
         // -H
-        if (typeof h !== 'object' || Array.isArray(h)){
+        if (typeof h !== 'object' || Array.isArray(h)) {
             throw new TypeError('Headers must be an object');
         } else {
             this.H = h;
+            return this;
         }
-        return this;
     }
     acceptHeader() {
         // -A
         //HTTP Accept header.
         return this
     }
-    requestBody() {
+    requestBody(body) {
         // -d
-        return this
+        if (typeof body !== 'object' || Array.isArray(body)) {
+            throw new TypeError('Request body must be a JSON object');
+        } else {
+            this.d = ` -d '${JSON.stringify(body)}'`
+            return this
+        }
     }
     requestFile(file) {
         // -D request body from file
-        if (typeof file !== 'string'){
+        if (typeof file !== 'string') {
             throw new TypeError('Request File must be of type string');
         } else {
             this.D = ` -D ${file} `
             return this
         }
-        return this
     }
     contentType(type) {
         // -T content type appplication/json
-        if (typeof type !== 'string'){
+        if (typeof type !== 'string') {
             throw new TypeError('Content-Type must be of type string');
         } else {
             this.T = ` -T ${type} `
             return this
         }
     }
-    auth() {
+    auth(auth) {
         // -a Basic authentication, username:password.
-        return this
+        if (typeof type !== 'string') {
+            throw new TypeError('Content-Type must be of type string');
+        } else {
+            this.a = ` -a '${auth}' `
+            return this
+        }
     }
-    proxy() {
+    proxy(host, port) {
         // -x  HTTP Proxy address as host:port.
+        if (typeof host !== 'string') {
+            throw new TypeError('Content-Type must be of type string');
+        } else if (typeof Number(port) !== 'number') {
+            throw new TypeError('port argument must be of type number');
+        }else {
+            this.a = ` -a '${host}:${port}' `
+            return this
+        }
         return this
     }
     hostHeader() {
@@ -111,7 +130,7 @@ class trev{
         return this
     }
     setUrl(url) {
-        if (typeof url !== 'string'){
+        if (typeof url !== 'string') {
             throw new TypeError('URL must be of type string');
         } else {
             this.url = ` ${url} `
@@ -120,32 +139,35 @@ class trev{
     }
     normalizeHeaders(headersList) {
         var headers = '';
-        for(let key in headersList) {
+        for (let key in headersList) {
             headers += ` -H '${key}:${headersList[key]}'`
         }
         return headers.trim();
     }
     createCommand() {
         var command = 'hey'
-        for(let key in this){
-            if(this[key] !== null && key !== 'url' && key !== 'H'){
+        for (let key in this) {
+            if (this[key] !== null && key !== 'url' && key !== 'H' && key !== 'title') {
                 command += this[key];
-            }else if(key === 'H' && this[key] !== null){
-                command += this.normalizeHeaders(this.H); 
+            } else if (key === 'H' && this[key] !== null && key !== 'title') {
+                command += this.normalizeHeaders(this.H);
             }
         }
-        console.log('command', (command + this.url).trim());
         return (command + this.url).trim();
-        
-       
     }
-    run () {
+    run() {
         const command = this.createCommand();
-        exec(command);
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`exec error: ${error}`);
+                return;
+            }
+            console.log(`${this.title} \n\n ${stdout}`);
+        });
     }
 }
 
 
-module.exports = () => {
-    return new trev;
+module.exports = (title) => {
+    return new trev(title);
 }
