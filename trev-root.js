@@ -13,6 +13,7 @@ class trev {
         this.d = null;
         this.D = null;
         this.T = null;
+        this.t = null;
         this.a = null;
         this.x = null;
         this.A = null;
@@ -42,12 +43,22 @@ class trev {
         if (typeof Number(limit) !== 'number') {
             throw new TypeError('limit is not of type number');
         } else {
+            this.t = ` -t ${limit} `;
+            return this;
+        }
+    }
+    rateLimit(limit) {
+        // -q
+        if (typeof Number(limit) !== 'number') {
+            throw new TypeError('limit is not of type number');
+        } else {
             this.q = ` -q ${limit} `;
             return this;
         }
     }
-    outputType(type) {
+    outputType() {
         // -o
+        this.o = ` -o csv `;
         return this;
     }
     method(verb) {
@@ -90,12 +101,12 @@ class trev {
             return this
         }
     }
-    requestFile(file) {
+    requestFile(filePath) {
         // -D request body from file
-        if (typeof file !== 'string') {
+        if (typeof filePath !== 'string') {
             throw new TypeError('Request File must be of type string');
         } else {
-            this.D = ` -D ${file} `
+            this.D = ` -D ${filePath} `
             return this
         }
     }
@@ -108,12 +119,12 @@ class trev {
             return this
         }
     }
-    auth(auth) {
+    auth(username, password) {
         // -a Basic authentication, username:password.
         if (typeof type !== 'string') {
             throw new TypeError('Content-Type must be of type string');
         } else {
-            this.a = ` -a '${auth}' `
+            this.a = ` -a '${username}:${password}' `
             return this
         }
     }
@@ -127,11 +138,15 @@ class trev {
             this.a = ` -a '${host}:${port}' `
             return this
         }
-        return this
     }
-    hostHeader() {
-        // TTP Host header
-        return this
+    hostHeader(host) {
+        // HTTP Host header
+        if (typeof type !== 'string') {
+            throw new TypeError('Host must be of type string');
+        } else {
+            this.host = ` -host '${host}' `
+            return this
+        }
     }
     setUrl(url) {
         if (typeof url !== 'string') {
