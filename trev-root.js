@@ -64,11 +64,11 @@ class trev {
     method(verb) {
         // -m
         //GET, POST, PUT, DELETE, HEAD, OPTIONS.
+        console.log(verb !== 'POST');
         if (typeof verb !== 'string') {
             throw new TypeError('Method is not type string');
-            if (verb !== 'PUT' || verb !== 'GET' || verb !== 'POST' || verb !== 'DELETE' || verb !== 'HEAD' || verb !== 'OPTIONS') {
-                throw new RangeError('Method not supported. Please use one of the following GET, POST, PUT, DELETE, HEAD, or OPTIONS.');
-            }
+        } else if (verb !== 'PUT' && verb !== 'GET' && verb !== 'POST' && verb !== 'DELETE' && verb !== 'HEAD' && verb !== 'OPTIONS') {
+            throw new RangeError(`Method: ${verb} not supported. Please use one of the following GET, POST, PUT, DELETE, HEAD, or OPTIONS.`);
         } else {
             this.m = ` -m ${verb} `;
             return this;
