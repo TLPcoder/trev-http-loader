@@ -10,13 +10,13 @@ class trev {
         this.q = null;
         this.o = null;
         this.m = null;
-        this.H = null;
-        this.A = null;
         this.d = null;
         this.D = null;
         this.T = null;
         this.a = null;
         this.x = null;
+        this.A = null;
+        this.H = null;
         this.url = null;
     }
     request(n) {
@@ -37,7 +37,7 @@ class trev {
             return this;
         }
     }
-    rateLimit(limit) {
+    timeout(limit) {
         // -q
         if (typeof Number(limit) !== 'number') {
             throw new TypeError('limit is not of type number');
@@ -72,10 +72,14 @@ class trev {
             return this;
         }
     }
-    acceptHeader() {
+    acceptHeader(accept) {
         // -A
-        //HTTP Accept header.
-        return this
+        if (typeof accept !== 'string') {
+            throw new TypeError('accept header must be of type string... Example: \'application/json\'');
+        } else {
+            this.A = ` -A ${accept} `
+            return this
+        }
     }
     requestBody(body) {
         // -d
@@ -157,6 +161,7 @@ class trev {
     }
     run() {
         const command = this.createCommand();
+        console.log('command    ', command);
         exec(command, (error, stdout, stderr) => {
             if (error) {
                 console.error(`exec error: ${error}`);
