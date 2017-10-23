@@ -12,11 +12,13 @@ app.use(bodyParser.json())
 
 app.get('/', (req, res, next) => {
     trev('testing 1').request(1).concurrency(1).timeout(30).contentType('application/json')
-    .method('POST').requestBody({testing: '1'}).acceptHeader('application/json').headers({hello: 'world', something: 1, it: 'worked'}).setUrl('http://localhost:8080/do/something/else').run()
+    .method('POST').requestBody({testing: '1'}).auth('trevor', 'pellegrini').acceptHeader('application/json').headers({hello: 'world', something: 1, it: 'worked'}).setUrl('http://localhost:8080/do/something/else').run()
 
     trev('testing 2').request(1).concurrency(1).timeout(30).contentType('application/json')
     .method('POST').requestBody({testing:'2'}).setUrl('http://localhost:8080/do/something/else').run()
     res.status(200).json({hello: 'world'});
+
+    res.json('testing routes')
 })
 
 app.post('/do/something/else', (req, res, next) => {

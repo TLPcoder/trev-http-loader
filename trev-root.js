@@ -1,6 +1,5 @@
 'use strict';
 const { exec } = require('child_process');
-const { writeFileSync , unlinkSync} = require('fs')
 
 class trev {
     constructor(title) {
@@ -64,7 +63,6 @@ class trev {
     method(verb) {
         // -m
         //GET, POST, PUT, DELETE, HEAD, OPTIONS.
-        console.log(verb !== 'POST');
         if (typeof verb !== 'string') {
             throw new TypeError('Method is not type string');
         } else if (verb !== 'PUT' && verb !== 'GET' && verb !== 'POST' && verb !== 'DELETE' && verb !== 'HEAD' && verb !== 'OPTIONS') {
@@ -121,7 +119,7 @@ class trev {
     }
     auth(username, password) {
         // -a Basic authentication, username:password.
-        if (typeof type !== 'string') {
+        if (typeof username !== 'string' && typeof password !== 'string') {
             throw new TypeError('Content-Type must be of type string');
         } else {
             this.a = ` -a '${username}:${password}' `
@@ -176,13 +174,13 @@ class trev {
     }
     run() {
         const command = this.createCommand();
-        console.log('command    ', command);
         exec(command, (error, stdout, stderr) => {
             if (error) {
                 console.error(`exec error: ${error}`);
                 return;
             }
             console.log(`${this.title} \n\n ${stdout}`);
+            return command;
         });
     }
 }
