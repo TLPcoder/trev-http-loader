@@ -17,7 +17,7 @@ describe('', function() {
     it('Testing outputType Method', function() {
         chai.expect(trev().outputType().o).to.eql(' -o csv ');
     })
-    it('Testing Verb Method Method', function() {
+    it('Testing Verb Method Method', function() { 
         chai.expect(trev().method('GET').m).to.eql(' -m GET ');
         chai.expect(trev().method('POST').m).to.eql(' -m POST ');
         chai.expect(trev().method('PUT').m).to.eql(' -m PUT ');
